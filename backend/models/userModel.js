@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         enum: ['male', 'female']
     },
-    avtar: {
+    avatar: {
         type: String,
         required: true
     },

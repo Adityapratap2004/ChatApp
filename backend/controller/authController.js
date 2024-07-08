@@ -26,7 +26,7 @@ exports.register = catchAsyncError(async (req, res, next) => {
         email,
         password,
         gender,
-        avtar: gender === 'male' ? boyProfilePic : girlProfilePic,
+        avatar: gender === 'male' ? boyProfilePic : girlProfilePic,
     })
 
     generateTokenAndSetCookie(user._id,res);

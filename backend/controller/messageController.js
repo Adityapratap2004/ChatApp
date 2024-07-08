@@ -1,6 +1,7 @@
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const Conversation = require("../models/conversationModel");
 const Message = require("../models/messageModel");
+const { io,getReceiverSocketId } = require("../socket/socket");
 
 
 exports.sendMessage = catchAsyncErrors(async (req, res, next) => {
@@ -29,6 +30,12 @@ exports.sendMessage = catchAsyncErrors(async (req, res, next) => {
     }
 
     await Promise.all([conversation.save(), newMessage.save()]);
+
+    const receiverSocketId=getReceiverSocketId(receiverId);
+    if(receiverSocketId){
+        // io.to (<socket_id>).emit() used to send events to specific client
+        io.to(receiverSocketId).emit("newMessage",newMessage);
+    }
 
     return res.status(200).json({
         success: true,

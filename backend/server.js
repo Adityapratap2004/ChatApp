@@ -9,9 +9,10 @@ const errorMiddleware=require('./middleware/error');
 const messageRoutes=require('./routes/messageRoutes')
 const userRoutes=require('./routes/userRoutes')
 const connectDB = require('./config/db');
+const {app, server}=require('./socket/socket')
 
 
-const app=express();
+
 dotenv.config(); 
 const PORT=process.env.PORT
 
@@ -41,7 +42,7 @@ app.use('/api/user',userRoutes)
 //Error Middleware
 app.use(errorMiddleware);
 
-app.listen(5000,()=>{
+server.listen(5000,()=>{
     console.log(`server started on port ${PORT}`);
 })
 

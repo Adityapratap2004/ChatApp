@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useConversationContext } from "../../context/ConversationContext";
+import { useConversationContext } from "../context/ConversationContext";
 import { toast } from 'react-hot-toast'
 
 const useSendMessage = () => {
