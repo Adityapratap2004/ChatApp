@@ -1,20 +1,22 @@
-const express=require('express');
-const dotenv=require('dotenv')
+const path = require('path');
+const express = require('express');
+const dotenv = require('dotenv')
 const cookieParser = require('cookie-parser');
 
 
 
-const authRoute=require('./routes/authRoutes')
-const errorMiddleware=require('./middleware/error');
-const messageRoutes=require('./routes/messageRoutes')
-const userRoutes=require('./routes/userRoutes')
+const authRoute = require('./routes/authRoutes')
+const errorMiddleware = require('./middleware/error');
+const messageRoutes = require('./routes/messageRoutes')
+const userRoutes = require('./routes/userRoutes')
 const connectDB = require('./config/db');
-const {app, server}=require('./socket/socket')
+const { app, server } = require('./socket/socket')
 
 
 
-dotenv.config(); 
-const PORT=process.env.PORT
+dotenv.config();
+const PORT = process.env.PORT || 5000
+
 
 //to connect to database
 connectDB();
@@ -22,7 +24,7 @@ connectDB();
 
 
 //Handling Uncaught Exception
-process.on('uncaughtException',err=>{
+process.on('uncaughtException', err => {
     console.log(`Error:${err.message}`);
     console.log(`Shutting down the server due to uncaught exception`);
     process.exit(1);
@@ -30,27 +32,45 @@ process.on('uncaughtException',err=>{
 
 //middleware
 
-app.use(express.json()); 
-app.use(cookieParser())  
+app.use(express.json());
+app.use(cookieParser());
+
+
+// API endpoint to provide backend URL for socket
+app.get('/env', (req, res) => {
+    res.json({
+        SocketURL: process.env.SOCKET_URL_FOR_FRONTEND || '',
+    });
+});
+
 
 //Routes
 
-app.use("/api/auth",authRoute);
-app.use("/api/message",messageRoutes);
-app.use('/api/user',userRoutes)
+app.use("/api/auth", authRoute);
+app.use("/api/message", messageRoutes);
+app.use('/api/user', userRoutes)
 
 //Error Middleware
 app.use(errorMiddleware);
 
-server.listen(5000,()=>{
+// Serve static files from frontend
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath)); 
+app.use(express.static(path.join(frontendPath, 'assets')));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+server.listen(PORT, () => {
     console.log(`server started on port ${PORT}`);
 })
 
 //Handle unhandled promise rejections
-process.on('unhandledRejection',err=>{
+process.on('unhandledRejection', err => {
     console.log(`Error:${err.message}`);
     console.log(`Shutting down the server due to unhandled promise rejection`);
-    server.close(()=>{
+    server.close(() => {
         process.exit(1);
     })
 })
