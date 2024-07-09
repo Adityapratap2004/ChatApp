@@ -21,7 +21,7 @@ const NoChatSelected = () => {
 
 const MessageContainer = () => {
     const { selectedConversation, setSelectedConversation } = useConversationContext();
-    console.log(selectedConversation);
+    
 
 
     useEffect(() => {
