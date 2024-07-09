@@ -17,6 +17,8 @@ const { app, server } = require('./socket/socket')
 dotenv.config();
 const PORT = process.env.PORT || 5000
 
+__dirname=path.resolve();
+
 
 //to connect to database
 connectDB();
@@ -54,13 +56,13 @@ app.use('/api/user', userRoutes)
 app.use(errorMiddleware);
 
 // Serve static files from frontend
-const frontendPath = path.join(__dirname, '../frontend/dist');
-app.use(express.static(frontendPath)); 
-app.use(express.static(path.join(frontendPath, 'assets')));
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
 app.get("*", (req, res) => {
-    res.sendFile(path.join(frontendPath, 'index.html'));
+	res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
+
+
 
 server.listen(PORT, () => {
     console.log(`server started on port ${PORT}`);
